@@ -12,7 +12,7 @@ class Client extends Model
     protected $fillable = [
         'user_id',
         'phone',
-        'adress',
+        'address',
         'city',
         'created_at',
         'updated_at'
@@ -24,7 +24,7 @@ class Client extends Model
             'id' => 'integer',
             'user_id' => 'integer',
             'phone' => 'string',
-            'adress' => 'string',
+            'address' => 'string',
             'city' => 'string',
             'created_at' => 'datetime',
             'updated_at' => 'datetime'
