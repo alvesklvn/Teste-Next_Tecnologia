@@ -16,8 +16,8 @@ class UsersSeeder extends Seeder
         DB::table('users')->insert([
             'name' => 'administrador',
             'email' => 'admin123@gmail.com',
-            #administradorbarber123
-            'password' => "\$2y\$12\$Ok8Hvb0HAy5PsNBAu2ICH.jg8R04V9SMWTew52KqePM6PHEcnHg36",
+            #administradorbarber123!
+            'password' => "\$2y\$12\$MogElyrAjy9Oiwp0X7mMBeYIMG9OYZiIK77nHw3B.HVCGOsrlLVwW",
             'email_verified_at' => now(),
             'user_type_id' => 1,
             'created_at' => now()

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('schedulings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained();
-            $table->foreignId('barber_id')->constrained();
+            $table->foreignId('client_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('barber_id')->constrained()->cascadeOnDelete();
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->timestamps();

@@ -11,14 +11,152 @@
         }
     ],
     "paths": {
-        "/api/auth/register": {
+        "/api/admin/": {
+            "get": {
+                "tags": [
+                    "Admins"
+                ],
+                "summary": "Lista administradores",
+                "description": "Retorna uma listagem paginada de administradores (10 por página).\n\n **Middleware:** Apenas admins (`is.Admin`)",
+                "operationId": "listAdmins",
+                "responses": {
+                    "200": {
+                        "description": "Retorna a lista paginada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AdminResource"
+                                            }
+                                        },
+                                        "links": {
+                                            "$ref": "#/components/schemas/LaravelPaginationLinks"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/LaravelPaginationMeta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar listar administradores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível listar administradores"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admins"
+                ],
+                "summary": "Atualização de admin",
+                "description": "Um usuário administrador pode se auto modificar.\n\n**Middleware:** Apenas admins (`is.Admin`)",
+                "operationId": "putUpdateAdmin",
+                "requestBody": {
+                    "description": "Dados necessários para realizar a operação (\"phone\" é necessário se \"is_barber\" for true)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "password",
+                                    "is_barber"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Joao Pedro"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "jp123!__zero123"
+                                    },
+                                    "is_barber": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "12999999999"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Administrador consegue atualizar suas propriedades",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar atualizar administrador",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível atualizar usuário administrador"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
-                    "Autenticação"
+                    "Admins"
                 ],
-                "summary": "Registra um novo usuário no sistema",
-                "operationId": "d764dd091cc4494ae0baf360b03319f3",
+                "summary": "Cria um admin",
+                "description": "Permite a um administrador criar um novo usuário administrador.\n\n**Middleware:** Apenas admins (`is.Admin`)",
+                "operationId": "createAdmin",
                 "requestBody": {
+                    "description": "Dados necessários para realizar a operação (\"phone\" é necessário se \"is_barber\" for true)",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -27,32 +165,30 @@
                                     "name",
                                     "email",
                                     "password",
-                                    "phone",
-                                    "cep"
+                                    "is_barber"
                                 ],
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "example": "Kelvin"
+                                        "example": "Joao Pedro"
                                     },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "kelvin.pereira1904@gmail.com"
+                                        "example": "jp05072007@gmail.com"
                                     },
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "S3nh4!um23"
+                                        "example": "jp123!__zero123"
+                                    },
+                                    "is_barber": {
+                                        "type": "boolean",
+                                        "example": true
                                     },
                                     "phone": {
                                         "type": "string",
-                                        "format": "phone",
                                         "example": "12999999999"
-                                    },
-                                    "cep": {
-                                        "type": "string",
-                                        "example": "11111111"
                                     }
                                 },
                                 "type": "object"
@@ -62,16 +198,383 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Verifique seu email"
-                    },
-                    "502": {
-                        "description": "Serviço de procura de cep indisponível"
-                    },
-                    "422": {
-                        "description": "Cep não encontrado"
+                        "description": "Usuário administrador é criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "500": {
-                        "description": "Erro ao cadastrar usuário"
+                        "description": "Erro interno ao tentar registrar usuário administrador",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível registrar usuário administrador"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admins"
+                ],
+                "summary": "Exclusão de admin",
+                "description": "Um usuário administrador pode deletar sua conta do sistema (se não for o único administrador).\n\n**Middleware:** Apenas admins (`is.Admin`)",
+                "operationId": "deleteAdmin",
+                "responses": {
+                    "200": {
+                        "description": "Usuario administrador consegue deletar a própria conta",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Você deletou sua conta de administrador"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Administrador tenta excluir sua conta do sistema sendo o único administrador",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Você não pode apagar sua conta sendo o único administrador"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar excluir conta de administrador",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível deletar conta de administrador"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Admins"
+                ],
+                "summary": "Atualização de admin",
+                "description": "Um usuário administrador pode se auto modificar.\n\n**Middleware:** Apenas admins (`is.Admin`)",
+                "operationId": "patchUpdateAdmin",
+                "requestBody": {
+                    "description": "Pelo menos um dado deve ser enviado para realizar a operação (\"phone\" é necessário se \"is_barber\" for true)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "password",
+                                    "is_barber"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Joao Pedro"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "jp123!__zero123"
+                                    },
+                                    "is_barber": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "12999999999"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Administrador consegue atualizar suas propriedades",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar atualizar administrador",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível atualizar usuário administrador"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/{id}/": {
+            "get": {
+                "tags": [
+                    "Admins"
+                ],
+                "summary": "Exibe um unico administrador",
+                "description": "Exibe o administrador pertencente ao id passado por parâmetro.\n\n**Middleware:** Apenas admins (`is.Admin`)",
+                "operationId": "showAdmin",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do usuário administrador que será exibido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 25
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna usuário admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sistema não encontra um usuário administrador correspondente ao id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário administrador não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar procurar por administrador",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível procurar por usuário administrador"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registrar cliente",
+                "description": "Permite que um usuário insira suas informações e se cadastre no sistema como cliente",
+                "operationId": "createUser",
+                "requestBody": {
+                    "description": "Dados necessários para realizar a operação",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "cep",
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "nome do usuário",
+                                        "type": "string",
+                                        "example": "Kelvin"
+                                    },
+                                    "email": {
+                                        "description": "email do usuário",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "kelvin@gmail.com"
+                                    },
+                                    "password": {
+                                        "description": "Senha que o usuário utilizará para se autenticar no sistema",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "S3nh4_um23!"
+                                    },
+                                    "cep": {
+                                        "description": "É o código de endereçamento postal do usuário",
+                                        "type": "string",
+                                        "example": "12999999"
+                                    },
+                                    "phone": {
+                                        "description": "Número de telefone celular do usuário",
+                                        "type": "string",
+                                        "example": "12999999999"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuário criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Verifique seu email"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "API de consulta de CEP indisponível",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Serviço de procura de cep indisponível"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "CEP não foi encontrado pela API",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cep não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno na hora de registrar usuário",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível registrar usuário"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -79,16 +582,81 @@
         "/api/auth/email/verify/{id}/{hash}": {
             "get": {
                 "tags": [
-                    "Autenticação"
+                    "Auth"
                 ],
-                "summary": "Verifica o email de um usuário e o libera para utilizar o sistema",
-                "operationId": "3f036b6fdf75ec4a1a28e716b5db2fd8",
+                "summary": "Verificar email de usuário",
+                "description": "Permite que um usuário verifique o próprio email para ter acesso ao sistema",
+                "operationId": "verifyEmail",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do usuário que está verificando o próprio email",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 25
+                        }
+                    },
+                    {
+                        "name": "hash",
+                        "in": "path",
+                        "description": "Hash sha1 do email do usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "abc1234k5h9"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Email verificado com sucesso"
+                        "description": "Sistema consegue verificar o email do usuário",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email verificado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Hash de verificação de email inválido"
+                        "description": "Hash recebido pelo parametro da rota é inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Hash de verificação de email inválido"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar verificar email do usuário",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível verificar email"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -96,11 +664,13 @@
         "/api/auth/login": {
             "post": {
                 "tags": [
-                    "Autenticação"
+                    "Auth"
                 ],
-                "summary": "Verifica email e senha enviados pelo usuário e retorna um bearer token",
-                "operationId": "8dcb70df1020986038d098cc08d05dae",
+                "summary": "Autenticar usuário",
+                "description": "Gera e exibe bearer token que permite acesso a rotas protegidas pelo sanctum",
+                "operationId": "authenticateUser",
                 "requestBody": {
+                    "description": "Dados necessários para realizar a operação",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -113,12 +683,12 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "kelvin.pereira1904@gmail.com"
+                                        "example": "kelvin@gmail.com"
                                     },
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "S3nh4!um23"
+                                        "example": "S3nh4_um23!"
                                     }
                                 },
                                 "type": "object"
@@ -128,36 +698,231 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Token: {bearer token}"
+                        "description": "Sistema gera o bearer token para o usuário",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "bearerToken": {
+                                            "type": "string",
+                                            "example": "1|0wIXY0aDxFTGUSZ6PXEEVNwuCSAj3oPOlpjiq0MN6168fc8a"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Email e/ou senha inválidos"
+                        "description": "Credenciais incorretas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email e/ou senha inválidos"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao autenticar usuário",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível autenticar usuário"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
-        "/api/auth/logout": {
+        "/api/auth/logou": {
             "post": {
                 "tags": [
-                    "Autenticação"
+                    "Auth"
                 ],
-                "summary": "Invalida e deleta o bearer token e remove a autenticação do usuário",
-                "operationId": "69281b12abb272c76871f19cb17ca563",
+                "summary": "Realiza logout",
+                "description": "Invalida e deleta o bearer token atual",
+                "operationId": "logoutUser",
                 "responses": {
                     "200": {
-                        "description": "Token deletado"
+                        "description": "Logout concluído",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logout realizado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
-                    "400": {
-                        "description": "Falha ao deletar token"
+                    "500": {
+                        "description": "Erro interno ao deletar token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Falha ao deletar token"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AdminResource": {
+                "properties": {
+                    "id": {
+                        "description": "Transform the resource into an array.",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "João Pedro"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "jp05072007_@gmail.com"
+                    },
+                    "is_barber": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "LaravelPaginationMeta": {
+                "title": "Metadados da paginação",
+                "properties": {
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "from": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "last_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "example": "http://localhost:8000/api/admin?page=1"
+                                },
+                                "label": {
+                                    "type": "string",
+                                    "example": "1"
+                                },
+                                "page": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "active": {
+                                    "type": "boolean",
+                                    "example": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "path": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/admin"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "to": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "total": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "LaravelPaginationLinks": {
+                "title": "Links de paginação",
+                "properties": {
+                    "first": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/admin?page=1"
+                    },
+                    "last": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/admin?page=1"
+                    },
+                    "prev": {
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "next": {
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Token de autenticação do laravel sanctum",
+                "scheme": "bearer"
             }
         }
     },
     "tags": [
         {
-            "name": "Autenticação",
-            "description": "Autenticação"
+            "name": "Admins",
+            "description": "Admins"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
         }
     ]
 }

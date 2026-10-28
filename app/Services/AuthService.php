@@ -6,19 +6,18 @@ use App\Exceptions\Cep\CepNaoEncontradoException;
 use App\Exceptions\Cep\ViaCepIndisponivelException;
 use App\Exceptions\EmailVerify\InvalidHashException;
 use App\Exceptions\Login\InvalidCredentialsException;
-use App\Exceptions\Register\RegisterErrorException;
 use App\Jobs\SendVerificationJob;
 use App\Models\Client;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use InvalidArgumentException;
 
 class AuthService
 {
-    const DUMMY_HASH = "\$2y\$12\$wbmJvsD2li.HbM25e.IKyuI5wdcE0IPYBj4dEdhA63PyA.EKW35T.";
+    private const DUMMY_HASH = "\$2y\$12\$wbmJvsD2li.HbM25e.IKyuI5wdcE0IPYBj4dEdhA63PyA.EKW35T.";
 
     public function register(array $data)
     {
@@ -58,32 +57,54 @@ class AuthService
             });
             return $user;
         } catch (\Throwable $e){
-            throw new RegisterErrorException();
+            return false;
         }
     }
 
     public function verify(int $id, string $hash)
     {
-        $user = User::findOrFail($id);
+        try {
+            $user = User::findOrFail($id);
+            
+            if (!hash_equals(sha1($user->getEmailForVerification()), $hash)){
+                throw new InvalidHashException();
+            }
         
-        if (!hash_equals(sha1($user->getEmailForVerification()), $hash)){
-            throw new InvalidHashException();
+            $user->markEmailAsVerified();
+            return true;
+        } catch (InvalidHashException $e){
+            throw $e;
+        } catch (\Throwable $e){
+            return false;
         }
-
-        $user->markEmailAsVerified();
-        return true;
     }
 
     public function login(array $data)
     {
-        $user = User::whereNotNull('email_verified_at')->where('email', $data['email'])->first();
-        $hashed = $user ? $user->password : self::DUMMY_HASH;
+        try{
+            $user = User::whereNotNull('email_verified_at')->where('email', $data['email'])->first();
+            $hashed = $user ? $user->password : self::DUMMY_HASH;
 
-        $passwordIsCorrect = Hash::check($data['password'], $hashed);
-        if (!$passwordIsCorrect || !$user){
-            throw new InvalidCredentialsException();
+            $passwordIsCorrect = Hash::check($data['password'], $hashed);
+            if (!$passwordIsCorrect || !$user){
+                throw new InvalidCredentialsException();
+            }
+
+            return $user->createToken('login')->plainTextToken;
+        } catch (InvalidCredentialsException $e){
+            throw $e;
+        } catch (\Throwable $e){
+            return false;
         }
+    }
 
-        return $user->createToken('login')->plainTextToken;
+    public function logout(User $user)
+    {
+        try{
+            $user->currentAccessToken()->delete();
+            return true;
+        } catch (\Throwable $e){
+            return false;
+        }
     }
 }
