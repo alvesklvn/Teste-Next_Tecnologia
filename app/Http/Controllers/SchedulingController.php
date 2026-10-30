@@ -438,7 +438,7 @@ class SchedulingController extends Controller
         path: '/api/scheduling/{id}',
         operationId: 'deleteScheduling',
         summary: 'Exclui agendamento',
-        description: "Um usuário responsável pelo agendamento cancelá-lo",
+        description: "Um usuário responsável pelo agendamento pode cancelá-lo",
         tags: ['Schedulings'],
         security: [['bearerAuth' => []]],
         responses: [

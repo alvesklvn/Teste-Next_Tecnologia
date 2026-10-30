@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\SchedulingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,5 +30,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [SchedulingController::class, 'show']);
         Route::patch('/{id}', [SchedulingController::class, 'update']);
         Route::delete('/{id}', [SchedulingController::class, 'destroy']);
+    });
+
+    Route::prefix('client')->group(function () {
+        Route::get('/', [ClientController::class, 'index']);
+        Route::get('/{id}', [ClientController::class, 'show']);
+        Route::patch('/{id}', [ClientController::class, 'update']);
+        Route::delete('/{id}', [ClientController::class, 'destroy']);
     });
 });

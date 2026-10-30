@@ -716,6 +716,388 @@
                 ]
             }
         },
+        "/api/client/": {
+            "get": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Lista clientes",
+                "description": "Retorna uma listagem paginada de clientes se o usuário for administrador e o próprio perfil de cliente se o usuário for cliente.",
+                "operationId": "listClients",
+                "responses": {
+                    "200": {
+                        "description": "Listagem paginada de clientes ou o próprio perfil de cliente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ClientPaginationResource"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ClientResource"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar listar clientes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível listar clientes"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/client/{id}/": {
+            "get": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Exibe um unico cliente",
+                "description": "Exibe o cliente cujo o user pertence ao id passado por parâmetro.",
+                "operationId": "showClient",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do usuário cliente que será exibido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 25
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna usuário cliente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ClientResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sistema não encontra um usuário cliente correspondente ao id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário cliente não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Usuário não é dono do perfil de cliente e nem administrador",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Você não pode ver perfis que não sejam o seu"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar procurar por cliente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível realizar consulta de cliente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/client/{id}": {
+            "delete": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Exclui cliente",
+                "description": "Um usuário responsável pelo perfil ou admin pode deletá-lo",
+                "operationId": "deleteClient",
+                "responses": {
+                    "200": {
+                        "description": "Usuario consegue deletar perfil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Conta de cliente deletada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sistema não encontra um cliente correspondente ao id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Usuário não é responsável pelo perfil encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Você não pode excluir perfis que não sejam o seu"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar deletar conta",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possivel deletar conta de cliente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Atualização de usuário cliente",
+                "description": "Permite a alteração das propriedades de usuários clientes.",
+                "operationId": "updateClient",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do usuário cliente que será exibido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 25
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pelo menos um dado deve ser enviado para realizar a operação",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "password",
+                                    "phone",
+                                    "cep"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Joao Pedro"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "jp123!__zero123"
+                                    },
+                                    "cep": {
+                                        "description": "Código de endereçamento postal do usuário",
+                                        "type": "string",
+                                        "example": "12999999"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "12999999999"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Administrador ou dono do perfil consegue alterar suas propriedades",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ClientResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sistema não consegue encontrar usuário cliente pertencente ao id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Usuário não é admin e nem responsável pelo perfil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Você não pode alterar perfis que não sejam o seu"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "API de consulta de cep indisponível",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Serviço de procura de cep indisponível"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "API de consulta de cep não encontra o cep passado pelo usuário",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cep não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar alterar cliente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível alterar propriedades de usuário cliente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/scheduling/": {
             "get": {
                 "tags": [
@@ -1020,7 +1402,7 @@
                     "Schedulings"
                 ],
                 "summary": "Exclui agendamento",
-                "description": "Um usuário responsável pelo agendamento cancelá-lo",
+                "description": "Um usuário responsável pelo agendamento pode cancelá-lo",
                 "operationId": "deleteScheduling",
                 "responses": {
                     "200": {
@@ -1287,6 +1669,53 @@
                 },
                 "type": "object"
             },
+            "ClientResource": {
+                "properties": {
+                    "id": {
+                        "description": "Transform the resource into an array.",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "João Pedro"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "jp05072007_@gmail.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "12999999999"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "Rua Doutor Celestino"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Cruzeiro - SP"
+                    }
+                },
+                "type": "object"
+            },
+            "ClientPaginationResource": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ClientResource"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/LaravelPaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/LaravelPaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
             "SchedulingResource": {
                 "properties": {
                     "id": {
@@ -1416,6 +1845,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Clients",
+            "description": "Clients"
         },
         {
             "name": "Schedulings",

@@ -49,13 +49,17 @@ class AuthService
                     'user_id' => $user->id,
                     'phone' => $data['phone'],
                     'address' => $response->json()['logradouro'],
-                    'city' => $response->json()['localidade'],
+                    'city' => $response->json()['localidade'] . ' - ' . $response->json()['uf'],
                     'created_at' => now()
                 ]);
                 SendVerificationJob::dispatch($user)->onQueue('verification')->beforeCommit();
                 return $user;
             });
             return $user;
+        } catch (ViaCepIndisponivelException $e){
+            throw $e;
+        } catch (CepNaoEncontradoException $e){
+            throw $e;
         } catch (\Throwable $e){
             return false;
         }

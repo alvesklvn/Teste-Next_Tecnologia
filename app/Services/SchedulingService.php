@@ -87,7 +87,7 @@ class SchedulingService
                 throw new InvalidPeriodDateException("Período de tempo indisponível", 422);
             }
 
-            if ($start->diffInHours($end) > 1.5){
+            if ($start->diffInMinutes($end) > 90){
                 throw new InvalidPeriodDateException("Período de tempo muito longo", 422);
             }
 
@@ -145,7 +145,7 @@ class SchedulingService
                 throw new UnauthorizedException("Você não é permitido de alterar esse agendamento", 403);
             }
 
-            if (now()->diffInHours($scheduling->start_date) <= 1.5){
+            if (now()->diffInMinutes($scheduling->start_date) <= 90){
                 throw new CancellationWindowExpiredException();
             }
 
@@ -169,7 +169,7 @@ class SchedulingService
                 throw new InvalidPeriodDateException("Período de tempo indisponível", 422);
             }
 
-            if ($start->diffInHours($end) > 1.5){
+            if ($start->diffInMinutes($end) > 90){
                 throw new InvalidPeriodDateException("Período de tempo muito longo", 422);
             }
 
@@ -183,6 +183,9 @@ class SchedulingService
         } catch (NotFoundResourceException $e){
             throw $e;
         } catch (UnauthorizedException $e){
+            throw $e;
+        } catch (CancellationWindowExpiredException $e){
+            abort(500, now()->diffInMinutes($scheduling->start_date));
             throw $e;
         } catch (UnverifiedEntityException $e){
             throw $e;
@@ -208,7 +211,7 @@ class SchedulingService
                 throw new UnauthorizedException("Você não é permitido de alterar esse agendamento", 403);
             } 
 
-            if (now()->diffInHours($scheduling->start_date) <= 1.5){
+            if (now()->diffInMinutes($scheduling->start_date) <= 90){
                 throw new CancellationWindowExpiredException();
             }
 
