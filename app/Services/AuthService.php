@@ -2,14 +2,13 @@
 
 namespace App\Services;
 
-use App\Exceptions\Cep\CepNaoEncontradoException;
-use App\Exceptions\Cep\ViaCepIndisponivelException;
+use App\Exceptions\Cep\CepNotFoundException;
+use App\Exceptions\Cep\ViaCepUnavailableException;
 use App\Exceptions\EmailVerify\InvalidHashException;
 use App\Exceptions\Login\InvalidCredentialsException;
 use App\Jobs\SendVerificationJob;
 use App\Models\Client;
 use App\Models\User;
-use Exception;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -24,15 +23,15 @@ class AuthService
         try {
             $response = Http::timeout(5)->get("https://viacep.com.br/ws/{$data['cep']}/json/");
         } catch (ConnectionException $e){
-            throw new ViaCepIndisponivelException();
+            throw new ViaCepUnavailableException();
         }
 
         if ($response->failed()){
-            throw new ViaCepIndisponivelException();
+            throw new ViaCepUnavailableException();
         }
 
         if ($response->json()['erro'] ?? false){
-            throw new CepNaoEncontradoException();
+            throw new CepNotFoundException();
         }
 
         try{
@@ -56,9 +55,9 @@ class AuthService
                 return $user;
             });
             return $user;
-        } catch (ViaCepIndisponivelException $e){
+        } catch (ViaCepUnavailableException $e){
             throw $e;
-        } catch (CepNaoEncontradoException $e){
+        } catch (CepNotFoundException $e){
             throw $e;
         } catch (\Throwable $e){
             return false;

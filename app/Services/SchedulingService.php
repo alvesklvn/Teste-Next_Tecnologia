@@ -13,9 +13,7 @@ use App\Models\Scheduling;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidPeriodDateException;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\UnauthorizedException;
-use InvalidArgumentException;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class SchedulingService

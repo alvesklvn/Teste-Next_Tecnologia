@@ -3,7 +3,9 @@
 use App\Exceptions\Admin\AdminNotFoundException;
 use App\Exceptions\Admin\SoleAdminException;
 use App\Exceptions\Cep\CepNaoEncontradoException;
+use App\Exceptions\Cep\CepNotFoundException;
 use App\Exceptions\Cep\ViaCepIndisponivelException;
+use App\Exceptions\Cep\ViaCepUnavailableException;
 use App\Exceptions\EmailVerify\EmailAlreadyVerifiedException;
 use App\Exceptions\EmailVerify\InvalidHashException;
 use App\Exceptions\Login\InvalidCredentialsException;
@@ -30,10 +32,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (ViaCepIndisponivelException $e){
+        $exceptions->render(function (ViaCepUnavailableException $e){
             return response()->json(["message" => "Serviço de procura de cep indisponível"], 502);
         });
-        $exceptions->render(function (CepNaoEncontradoException $e){
+        $exceptions->render(function (CepNotFoundException $e){
             return response()->json(["message" => "Cep não encontrado"], 422);
         });
         $exceptions->render(function (InvalidHashException $e){

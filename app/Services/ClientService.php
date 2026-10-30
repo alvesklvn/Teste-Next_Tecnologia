@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Exceptions\Cep\CepNaoEncontradoException;
-use App\Exceptions\Cep\ViaCepIndisponivelException;
+use App\Exceptions\Cep\CepNotFoundException;
+use App\Exceptions\Cep\ViaCepUnavailableException;
 use App\Http\Resources\ClientResource;
-use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Hash;
@@ -83,15 +82,15 @@ class ClientService
                 try {
                     $response = Http::timeout(5)->get("https://viacep.com.br/ws/{$data['cep']}/json/");
                 } catch (ConnectionException $e){
-                    throw new ViaCepIndisponivelException();
+                    throw new ViaCepUnavailableException();
                 }
 
                 if ($response->failed()){
-                    throw new ViaCepIndisponivelException();
+                    throw new ViaCepUnavailableException();
                 }
 
                 if ($response->json()['erro'] ?? false){
-                    throw new CepNaoEncontradoException();
+                    throw new CepNotFoundException();
                 }
 
                 $client->client->city = $response->json()['localidade'] . ' - ' . $response->json()['uf'];
@@ -105,9 +104,9 @@ class ClientService
             throw $e;
         } catch (UnauthorizedException $e){
             throw $e;
-        } catch (ViaCepIndisponivelException $e){
+        } catch (ViaCepUnavailableException $e){
             throw $e;
-        } catch (CepNaoEncontradoException $e){
+        } catch (CepNotFoundException $e){
             throw $e;
         } catch (\Throwable $e){
             return false;
