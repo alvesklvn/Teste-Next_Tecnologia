@@ -15,9 +15,9 @@ class ClientController extends Controller
     }
 
     #[OA\Get(
-        path: '/api/client/',
+        path: '/api/client',
         operationId: 'listClients',
-        summary: 'Lista clientes',
+        summary: 'Listagem de clientes',
         description: "Retorna uma listagem paginada de clientes se o usuário for administrador e o próprio perfil de cliente se o usuário for cliente.",
         tags: ["Clients"],
         security: [['bearerAuth' => []]],
@@ -49,6 +49,19 @@ class ClientController extends Controller
                     ]
                 )
             ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
+            )
         ]
     )]
     public function index(Request $request)
@@ -63,10 +76,10 @@ class ClientController extends Controller
     }
 
     #[OA\Get(
-        path: '/api/client/{id}/',
+        path: '/api/client/{id}',
         operationId: 'showClient',
-        summary: 'Exibe um unico cliente',
-        description: "Exibe o cliente cujo o user pertence ao id passado por parâmetro.",
+        summary: 'Busca por cliente',
+        description: "Busca e exibe o cliente cujo o user pertence ao id passado por parâmetro.",
         tags: ['Clients'],
         security: [['bearerAuth' => []]],
         parameters: [
@@ -129,6 +142,19 @@ class ClientController extends Controller
                         )
                     ]
                 )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
             )
         ]
     )]
@@ -161,9 +187,8 @@ class ClientController extends Controller
         ],
         requestBody: new OA\RequestBody(
             required: true,
-            description: 'Pelo menos um dado deve ser enviado para realizar a operação',
+            description: 'Dados que podem ser alterados pela operação (ao menos um obrigatório)',
             content: new OA\JsonContent(
-                required: ['name', 'password', 'phone', 'cep'],
                 properties: [
                     new OA\Property(
                         property: 'name',
@@ -267,6 +292,19 @@ class ClientController extends Controller
                         )
                     ]
                 )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
             )
         ]
     )]
@@ -285,8 +323,8 @@ class ClientController extends Controller
     #[OA\Delete(
         path: '/api/client/{id}',
         operationId: 'deleteClient',
-        summary: 'Exclui cliente',
-        description: "Um usuário responsável pelo perfil ou admin pode deletá-lo",
+        summary: 'Exclusão de cliente',
+        description: "Permite um usuário responsável pelo perfil de cliente ou admin deletá-lo",
         tags: ['Clients'],
         security: [['bearerAuth' => []]],
         responses: [
@@ -338,6 +376,19 @@ class ClientController extends Controller
                             property: 'message',
                             type: 'string',
                             example: 'Não foi possivel deletar conta de cliente'
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
                         )
                     ]
                 )

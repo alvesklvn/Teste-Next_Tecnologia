@@ -18,9 +18,9 @@ class AdminController extends Controller
     }
     
     #[OA\Get(
-        path: '/api/admin/',
+        path: '/api/admin',
         operationId: 'listAdmins',
-        summary: 'Lista administradores',
+        summary: 'Listagem de administradores',
         description: "Retorna uma listagem paginada de administradores (10 por página).\n\n **Middleware:** Apenas admins (`is.Admin`)",
         tags: ["Admins"],
         security: [['bearerAuth' => []]],
@@ -61,6 +61,19 @@ class AdminController extends Controller
                     ]
                 )
             ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
+            )
         ]
     )]
     public function index()
@@ -74,9 +87,9 @@ class AdminController extends Controller
     }
 
     #[OA\Post(
-        path: '/api/admin/',
+        path: '/api/admin',
         operationId: 'createAdmin',
-        summary: 'Cria um admin',
+        summary: 'Criação de administrador',
         description: "Permite um administrador criar um novo usuário administrador.\n\n**Middleware:** Apenas admins (`is.Admin`)",
         tags: ['Admins'],
         security: [['bearerAuth' => []]],
@@ -141,6 +154,19 @@ class AdminController extends Controller
                         )
                     ]
                 )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
             )
         ]
     )]
@@ -157,10 +183,10 @@ class AdminController extends Controller
     }
 
     #[OA\Get(
-        path: '/api/admin/{id}/',
+        path: '/api/admin/{id}',
         operationId: 'showAdmin',
-        summary: 'Exibe um unico administrador',
-        description: "Exibe o administrador pertencente ao id passado por parâmetro.\n\n**Middleware:** Apenas admins (`is.Admin`)",
+        summary: 'Busca por administrador',
+        description: "Busca e exibe o administrador pertencente ao id passado por parâmetro.\n\n**Middleware:** Apenas admins (`is.Admin`)",
         tags: ['Admins'],
         security: [['bearerAuth' => []]],
         parameters: [
@@ -210,6 +236,19 @@ class AdminController extends Controller
                         )
                     ]
                 )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
             )
         ]
     )]
@@ -225,17 +264,16 @@ class AdminController extends Controller
 
     
     #[OA\Patch(
-        path: '/api/admin/',
+        path: '/api/admin',
         operationId: 'updateAdmin',
         summary: 'Atualização de admin',
-        description: "Um usuário administrador pode se auto modificar.\n\n**Middleware:** Apenas admins (`is.Admin`)",
+        description: "Permite um usuário administrador se auto modificar.\n\n**Middleware:** Apenas admins (`is.Admin`)",
         tags: ['Admins'],
         security: [['bearerAuth' => []]],
         requestBody: new OA\RequestBody(
             required: true,
-            description: 'Pelo menos um dado deve ser enviado para realizar a operação ("phone" é necessário se "is_barber" for true)',
+            description: 'Dados que podem ser alterados pela operação (ao menos um obrigatório e "phone" é necessário se "is_barber" for true)',
             content: new OA\JsonContent(
-                required: ['name', 'password', 'is_barber'],
                 properties: [
                     new OA\Property(
                         property: 'name',
@@ -286,6 +324,19 @@ class AdminController extends Controller
                         )
                     ]
                 )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
             )
         ]
     )]
@@ -301,10 +352,10 @@ class AdminController extends Controller
     }
 
     #[OA\Delete(
-        path: '/api/admin/',
+        path: '/api/admin',
         operationId: 'deleteAdmin',
         summary: 'Exclusão de admin',
-        description: "Um usuário administrador pode deletar sua conta do sistema (se não for o único administrador).\n\n**Middleware:** Apenas admins (`is.Admin`)",
+        description: "Permite um usuário administrador deletar sua conta do sistema se não for o único administrador.\n\n**Middleware:** Apenas admins (`is.Admin`)",
         tags: ['Admins'],
         security: [['bearerAuth' => []]],
         responses: [
@@ -347,6 +398,19 @@ class AdminController extends Controller
                     ]
                 )
             ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
+            )
         ]
     )]
     public function destroy(Request $request)

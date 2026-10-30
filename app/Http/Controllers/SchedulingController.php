@@ -21,43 +21,56 @@ class SchedulingController extends Controller
     }
 
     #[OA\Get(
-        path: '/api/scheduling/',
+        path: '/api/scheduling',
         operationId: 'listScheduling',
-        summary: 'Lista agendamentos',
+        summary: 'Listagem de agendamentos',
         description: "Retorna uma listagem paginada de agendamentos (10 por página). O usuário pode usar filtros de busca por query string ou pelo request body. Os filtros são: start_date, end_date, barber_id e client_id",
         tags: ["Schedulings"],
         security: [['bearerAuth' => []]],
-        requestBody: new OA\RequestBody(
-            required: true,
-            description: "O campo client_id só pode ser usado por usuários clientes para ver os próprios agendamentos\n\nDados necessarios para realizar a operação",
-            content: new OA\JsonContent(
-                required: ['start_date', 'end_date', 'barber_id', 'client_id'],
-                properties: [
-                    new OA\Property(
-                        property: 'start_date',
-                        type: 'string',
-                        format: 'date',
-                        example: '2026-10-30'
-                    ),
-                    new OA\Property(
-                        property: 'end_date',
-                        type: 'string',
-                        format: 'date',
-                        example: '2026-10-30'
-                    ),
-                    new OA\Property(
-                        property: 'barber_id',
-                        type: 'integer',
-                        example: 2
-                    ),
-                    new OA\Property(
-                        property: 'client_id',
-                        type: 'integer',
-                        example: 15
-                    )
-                ]
+        parameters: [
+            new OA\Parameter(
+                name: "start_date",
+                in: "query",
+                description: "Data inicial para filtrar os agendamentos",
+                required: false,
+                schema: new OA\Schema(
+                    type: "string",
+                    format: "date",
+                    example: "2026-10-30"
+                )
+            ),
+            new OA\Parameter(
+                name: "end_date",
+                in: "query",
+                description: "Data final para filtrar os agendamentos",
+                required: false,
+                schema: new OA\Schema(
+                    type: "string",
+                    format: "date",
+                    example: "2026-10-30"
+                )
+            ),
+            new OA\Parameter(
+                name: "barber_id",
+                in: "query",
+                description: "Id do barbeiro para filtrar os agendamentos",
+                required: false,
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 2
+                )
+            ),
+            new OA\Parameter(
+                name: "client_id",
+                in: "query",
+                description: "O campo client_id só pode ser usado por usuários clientes para ver os próprios agendamentos",
+                required: false,
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 15
+                )
             )
-        ),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -95,6 +108,19 @@ class SchedulingController extends Controller
                     ]
                 )
             ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
+            )
         ]
     )]
     public function index(ListSchedulingRequest $request)
@@ -110,17 +136,17 @@ class SchedulingController extends Controller
     }
 
     #[OA\Post(
-        path: '/api/scheduling/',
+        path: '/api/scheduling',
         operationId: 'createScheduling',
-        summary: 'Cria um agendamento',
+        summary: 'Criação de agendamento',
         description: "Permite a um usuário criar um novo agendamento.",
         tags: ['Schedulings'],
         security: [['bearerAuth' => []]],
         requestBody: new OA\RequestBody(
             required: true,
-            description: "Se um usuário for barbeiro, \"barber_id\" se torna opcional, se ele for apenas administrador, se torna obrigatório, e, se for cliente, \"client_id\" se torna proibído e \"barber_id\" obrigatório.\n\nDados necessários para realizar a operação:",
+            description: "Regras conforme o tipo de usuário:\n\nAdmin Barbeiro: client_id obrigatório e barber_id opcional.\nAdmin comum: barber_id e client_id obrigatórios.\nCliente: barber_id é obrigatório e client_id é proibído.",
             content: new OA\JsonContent(
-                required: ['start_date', 'end_date', 'barber_id', 'client_id'],
+                required: ['start_date', 'end_date'],
                 properties: [
                     new OA\Property(
                         property: 'start_date',
@@ -202,6 +228,19 @@ class SchedulingController extends Controller
                     ]
                 )
             ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
+            )
         ]
     )]
     public function store(StoreSchedulingRequest $request)
@@ -217,10 +256,10 @@ class SchedulingController extends Controller
     }
 
     #[OA\Get(
-        path: '/api/scheduling/{id}/',
+        path: '/api/scheduling/{id}',
         operationId: 'showScheduling',
-        summary: 'Exibe um unico agendamento',
-        description: "Exibe o agendamento pertencente ao id passado por parâmetro.",
+        summary: 'Busca por agendamento',
+        description: "Busca e exibe o agendamento pertencente ao id passado por parâmetro.",
         tags: ['Schedulings'],
         security: [['bearerAuth' => []]],
         parameters: [
@@ -283,6 +322,19 @@ class SchedulingController extends Controller
                         )
                     ]
                 )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
             )
         ]
     )]
@@ -301,7 +353,7 @@ class SchedulingController extends Controller
         path: '/api/scheduling/{id}',
         operationId: 'updateScheduling',
         summary: 'Atualização de agendamento',
-        description: "Um usuário responsável pelo agendamento (cliente ou administradores) pode alterá-lo.",
+        description: "Permite um usuário responsável pelo agendamento (cliente ou administradores) alterá-lo.",
         tags: ['Schedulings'],
         security: [['bearerAuth' => []]],
         parameters: [
@@ -315,9 +367,8 @@ class SchedulingController extends Controller
         ],
         requestBody: new OA\RequestBody(
             required: true,
-            description: 'Dados que podem ser alterados pela operação',
+            description: 'Dados que podem ser alterados pela operação (ao menos um obrigatório)',
             content: new OA\JsonContent(
-                required: ['start_date', 'end_date', 'barber_id'],
                 properties: [
                     new OA\Property(
                         property: 'start_date',
@@ -419,6 +470,19 @@ class SchedulingController extends Controller
                         )
                     ]
                 )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
+                        )
+                    ]
+                )
             )
         ]
     )]
@@ -437,8 +501,8 @@ class SchedulingController extends Controller
     #[OA\Delete(
         path: '/api/scheduling/{id}',
         operationId: 'deleteScheduling',
-        summary: 'Exclui agendamento',
-        description: "Um usuário responsável pelo agendamento pode cancelá-lo",
+        summary: 'Exclusão de agendamento',
+        description: "Permite um usuário responsável pelo agendamento cancelá-lo",
         tags: ['Schedulings'],
         security: [['bearerAuth' => []]],
         responses: [
@@ -503,6 +567,19 @@ class SchedulingController extends Controller
                             property: 'message',
                             type: 'string',
                             example: 'Não foi possível deletar agendamento'
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
                         )
                     ]
                 )

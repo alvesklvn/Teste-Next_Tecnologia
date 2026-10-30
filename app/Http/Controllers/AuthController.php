@@ -22,7 +22,7 @@ class AuthController extends Controller
         path: '/api/auth/register',
         operationId: 'createUser',
         tags: ['Auth'],
-        summary: 'Registrar cliente',
+        summary: 'Registro de cliente',
         description: 'Permite que um usuário insira suas informações e se cadastre no sistema como cliente',
         requestBody: new OA\RequestBody(
             required: true,
@@ -135,7 +135,7 @@ class AuthController extends Controller
         path: '/api/auth/email/verify/{id}/{hash}',
         operationId: 'verifyEmail',
         tags: ['Auth'],
-        summary: 'Verificar email de usuário',
+        summary: 'Verificação de email',
         description: 'Permite que um usuário verifique o próprio email para ter acesso ao sistema',
         parameters: [
             new OA\Parameter(
@@ -208,8 +208,8 @@ class AuthController extends Controller
         path: '/api/auth/login',
         operationId: 'authenticateUser',
         tags: ['Auth'],
-        summary: 'Autenticar usuário',
-        description: 'Gera e exibe bearer token que permite acesso a rotas protegidas pelo sanctum',
+        summary: 'Criação de token',
+        description: 'Cria e exibe bearer token que permite acesso a rotas protegidas pelo sanctum',
         requestBody: new OA\RequestBody(
             required: true,
             description: 'Dados necessários para realizar a operação',
@@ -285,11 +285,11 @@ class AuthController extends Controller
     }
 
     #[OA\Post(
-        path: '/api/auth/logou',
+        path: '/api/auth/logout',
         operationId: 'logoutUser',
-        summary: 'Realiza logout',
+        summary: 'Exclusão de token',
         security: [['bearerAuth' => []]],
-        description: 'Invalida e deleta o bearer token atual',
+        description: 'Invalida e deleta o bearer token atual desautenticando o usuário',
         tags: ['Auth'],
         responses: [
             new OA\Response(
@@ -314,6 +314,19 @@ class AuthController extends Controller
                             property: 'message',
                             type: 'string',
                             example: 'Falha ao deletar token'
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Token de autenticação inválido ou inexistente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthenticated'
                         )
                     ]
                 )

@@ -11,12 +11,12 @@
         }
     ],
     "paths": {
-        "/api/admin/": {
+        "/api/admin": {
             "get": {
                 "tags": [
                     "Admins"
                 ],
-                "summary": "Lista administradores",
+                "summary": "Listagem de administradores",
                 "description": "Retorna uma listagem paginada de administradores (10 por página).\n\n **Middleware:** Apenas admins (`is.Admin`)",
                 "operationId": "listAdmins",
                 "responses": {
@@ -59,6 +59,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -71,7 +87,7 @@
                 "tags": [
                     "Admins"
                 ],
-                "summary": "Cria um admin",
+                "summary": "Criação de administrador",
                 "description": "Permite um administrador criar um novo usuário administrador.\n\n**Middleware:** Apenas admins (`is.Admin`)",
                 "operationId": "createAdmin",
                 "requestBody": {
@@ -146,6 +162,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -159,7 +191,7 @@
                     "Admins"
                 ],
                 "summary": "Exclusão de admin",
-                "description": "Um usuário administrador pode deletar sua conta do sistema (se não for o único administrador).\n\n**Middleware:** Apenas admins (`is.Admin`)",
+                "description": "Permite um usuário administrador deletar sua conta do sistema se não for o único administrador.\n\n**Middleware:** Apenas admins (`is.Admin`)",
                 "operationId": "deleteAdmin",
                 "responses": {
                     "200": {
@@ -209,6 +241,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -222,19 +270,14 @@
                     "Admins"
                 ],
                 "summary": "Atualização de admin",
-                "description": "Um usuário administrador pode se auto modificar.\n\n**Middleware:** Apenas admins (`is.Admin`)",
+                "description": "Permite um usuário administrador se auto modificar.\n\n**Middleware:** Apenas admins (`is.Admin`)",
                 "operationId": "updateAdmin",
                 "requestBody": {
-                    "description": "Pelo menos um dado deve ser enviado para realizar a operação (\"phone\" é necessário se \"is_barber\" for true)",
+                    "description": "Dados que podem ser alterados pela operação (ao menos um obrigatório e \"phone\" é necessário se \"is_barber\" for true)",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "name",
-                                    "password",
-                                    "is_barber"
-                                ],
                                 "properties": {
                                     "name": {
                                         "type": "string",
@@ -290,6 +333,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -299,13 +358,13 @@
                 ]
             }
         },
-        "/api/admin/{id}/": {
+        "/api/admin/{id}": {
             "get": {
                 "tags": [
                     "Admins"
                 ],
-                "summary": "Exibe um unico administrador",
-                "description": "Exibe o administrador pertencente ao id passado por parâmetro.\n\n**Middleware:** Apenas admins (`is.Admin`)",
+                "summary": "Busca por administrador",
+                "description": "Busca e exibe o administrador pertencente ao id passado por parâmetro.\n\n**Middleware:** Apenas admins (`is.Admin`)",
                 "operationId": "showAdmin",
                 "parameters": [
                     {
@@ -366,6 +425,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -380,7 +455,7 @@
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Registrar cliente",
+                "summary": "Registro de cliente",
                 "description": "Permite que um usuário insira suas informações e se cadastre no sistema como cliente",
                 "operationId": "createUser",
                 "requestBody": {
@@ -503,7 +578,7 @@
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Verificar email de usuário",
+                "summary": "Verificação de email",
                 "description": "Permite que um usuário verifique o próprio email para ter acesso ao sistema",
                 "operationId": "verifyEmail",
                 "parameters": [
@@ -585,8 +660,8 @@
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Autenticar usuário",
-                "description": "Gera e exibe bearer token que permite acesso a rotas protegidas pelo sanctum",
+                "summary": "Criação de token",
+                "description": "Cria e exibe bearer token que permite acesso a rotas protegidas pelo sanctum",
                 "operationId": "authenticateUser",
                 "requestBody": {
                     "description": "Dados necessários para realizar a operação",
@@ -667,13 +742,13 @@
                 }
             }
         },
-        "/api/auth/logou": {
+        "/api/auth/logout": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Realiza logout",
-                "description": "Invalida e deleta o bearer token atual",
+                "summary": "Exclusão de token",
+                "description": "Invalida e deleta o bearer token atual desautenticando o usuário",
                 "operationId": "logoutUser",
                 "responses": {
                     "200": {
@@ -707,6 +782,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -716,12 +807,12 @@
                 ]
             }
         },
-        "/api/client/": {
+        "/api/client": {
             "get": {
                 "tags": [
                     "Clients"
                 ],
-                "summary": "Lista clientes",
+                "summary": "Listagem de clientes",
                 "description": "Retorna uma listagem paginada de clientes se o usuário for administrador e o próprio perfil de cliente se o usuário for cliente.",
                 "operationId": "listClients",
                 "responses": {
@@ -757,6 +848,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -766,13 +873,13 @@
                 ]
             }
         },
-        "/api/client/{id}/": {
+        "/api/client/{id}": {
             "get": {
                 "tags": [
                     "Clients"
                 ],
-                "summary": "Exibe um unico cliente",
-                "description": "Exibe o cliente cujo o user pertence ao id passado por parâmetro.",
+                "summary": "Busca por cliente",
+                "description": "Busca e exibe o cliente cujo o user pertence ao id passado por parâmetro.",
                 "operationId": "showClient",
                 "parameters": [
                     {
@@ -849,6 +956,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -856,15 +979,13 @@
                         "bearerAuth": []
                     }
                 ]
-            }
-        },
-        "/api/client/{id}": {
+            },
             "delete": {
                 "tags": [
                     "Clients"
                 ],
-                "summary": "Exclui cliente",
-                "description": "Um usuário responsável pelo perfil ou admin pode deletá-lo",
+                "summary": "Exclusão de cliente",
+                "description": "Permite um usuário responsável pelo perfil de cliente ou admin deletá-lo",
                 "operationId": "deleteClient",
                 "responses": {
                     "200": {
@@ -930,6 +1051,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -958,17 +1095,11 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Pelo menos um dado deve ser enviado para realizar a operação",
+                    "description": "Dados que podem ser alterados pela operação (ao menos um obrigatório)",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "name",
-                                    "password",
-                                    "phone",
-                                    "cep"
-                                ],
                                 "properties": {
                                     "name": {
                                         "type": "string",
@@ -1089,6 +1220,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1098,51 +1245,58 @@
                 ]
             }
         },
-        "/api/scheduling/": {
+        "/api/scheduling": {
             "get": {
                 "tags": [
                     "Schedulings"
                 ],
-                "summary": "Lista agendamentos",
+                "summary": "Listagem de agendamentos",
                 "description": "Retorna uma listagem paginada de agendamentos (10 por página). O usuário pode usar filtros de busca por query string ou pelo request body. Os filtros são: start_date, end_date, barber_id e client_id",
                 "operationId": "listScheduling",
-                "requestBody": {
-                    "description": "O campo client_id só pode ser usado por usuários clientes para ver os próprios agendamentos\n\nDados necessarios para realizar a operação",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "start_date",
-                                    "end_date",
-                                    "barber_id",
-                                    "client_id"
-                                ],
-                                "properties": {
-                                    "start_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2026-10-30"
-                                    },
-                                    "end_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2026-10-30"
-                                    },
-                                    "barber_id": {
-                                        "type": "integer",
-                                        "example": 2
-                                    },
-                                    "client_id": {
-                                        "type": "integer",
-                                        "example": 15
-                                    }
-                                },
-                                "type": "object"
-                            }
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Data inicial para filtrar os agendamentos",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-10-30"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Data final para filtrar os agendamentos",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-10-30"
+                        }
+                    },
+                    {
+                        "name": "barber_id",
+                        "in": "query",
+                        "description": "Id do barbeiro para filtrar os agendamentos",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    },
+                    {
+                        "name": "client_id",
+                        "in": "query",
+                        "description": "O campo client_id só pode ser usado por usuários clientes para ver os próprios agendamentos",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
                         "description": "Retorna a lista paginada com sucesso",
@@ -1183,6 +1337,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1195,20 +1365,18 @@
                 "tags": [
                     "Schedulings"
                 ],
-                "summary": "Cria um agendamento",
+                "summary": "Criação de agendamento",
                 "description": "Permite a um usuário criar um novo agendamento.",
                 "operationId": "createScheduling",
                 "requestBody": {
-                    "description": "Se um usuário for barbeiro, \"barber_id\" se torna opcional, se ele for apenas administrador, se torna obrigatório, e, se for cliente, \"client_id\" se torna proibído e \"barber_id\" obrigatório.\n\nDados necessários para realizar a operação:",
+                    "description": "Regras conforme o tipo de usuário:\n\nAdmin Barbeiro: client_id obrigatório e barber_id opcional.\nAdmin comum: barber_id e client_id obrigatórios.\nCliente: barber_id é obrigatório e client_id é proibído.",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
                                     "start_date",
-                                    "end_date",
-                                    "barber_id",
-                                    "client_id"
+                                    "end_date"
                                 ],
                                 "properties": {
                                     "start_date": {
@@ -1295,6 +1463,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1304,13 +1488,13 @@
                 ]
             }
         },
-        "/api/scheduling/{id}/": {
+        "/api/scheduling/{id}": {
             "get": {
                 "tags": [
                     "Schedulings"
                 ],
-                "summary": "Exibe um unico agendamento",
-                "description": "Exibe o agendamento pertencente ao id passado por parâmetro.",
+                "summary": "Busca por agendamento",
+                "description": "Busca e exibe o agendamento pertencente ao id passado por parâmetro.",
                 "operationId": "showScheduling",
                 "parameters": [
                     {
@@ -1387,6 +1571,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1394,15 +1594,13 @@
                         "bearerAuth": []
                     }
                 ]
-            }
-        },
-        "/api/scheduling/{id}": {
+            },
             "delete": {
                 "tags": [
                     "Schedulings"
                 ],
-                "summary": "Exclui agendamento",
-                "description": "Um usuário responsável pelo agendamento pode cancelá-lo",
+                "summary": "Exclusão de agendamento",
+                "description": "Permite um usuário responsável pelo agendamento cancelá-lo",
                 "operationId": "deleteScheduling",
                 "responses": {
                     "200": {
@@ -1484,6 +1682,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1497,7 +1711,7 @@
                     "Schedulings"
                 ],
                 "summary": "Atualização de agendamento",
-                "description": "Um usuário responsável pelo agendamento (cliente ou administradores) pode alterá-lo.",
+                "description": "Permite um usuário responsável pelo agendamento (cliente ou administradores) alterá-lo.",
                 "operationId": "updateScheduling",
                 "parameters": [
                     {
@@ -1512,16 +1726,11 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Dados que podem ser alterados pela operação",
+                    "description": "Dados que podem ser alterados pela operação (ao menos um obrigatório)",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "start_date",
-                                    "end_date",
-                                    "barber_id"
-                                ],
                                 "properties": {
                                     "start_date": {
                                         "type": "string",
@@ -1629,6 +1838,22 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Não foi possível alterar o agendamento"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token de autenticação inválido ou inexistente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
                                         }
                                     },
                                     "type": "object"
