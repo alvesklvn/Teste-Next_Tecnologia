@@ -50,7 +50,7 @@ use OpenApi\Attributes as OA;
                     new OA\Property(
                         property: 'url',
                         type: 'string',
-                        example: "http://localhost:8000/api/admin?page=1"
+                        example: "http://localhost:8000/api/domain?page=1"
                     ),
                     new OA\Property(
                         property: 'label',
@@ -73,7 +73,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(
             property: 'path',
             type: 'string',
-            example: 'http://localhost:8000/api/admin',
+            example: 'http://localhost:8000/api/domain',
         ),
         new OA\Property(
             property: 'per_page',
@@ -102,12 +102,12 @@ use OpenApi\Attributes as OA;
         new OA\Property(
             property: 'first',
             type: 'string',
-            example: 'http://localhost:8000/api/admin?page=1'
+            example: 'http://localhost:8000/api/domain?page=1'
         ),
         new OA\Property(
             property: 'last',
             type: 'string',
-            example: 'http://localhost:8000/api/admin?page=1'
+            example: 'http://localhost:8000/api/domain?page=1'
         ),
         new OA\Property(
             property: 'prev',

@@ -67,93 +67,12 @@
                     }
                 ]
             },
-            "put": {
-                "tags": [
-                    "Admins"
-                ],
-                "summary": "Atualização de admin",
-                "description": "Um usuário administrador pode se auto modificar.\n\n**Middleware:** Apenas admins (`is.Admin`)",
-                "operationId": "putUpdateAdmin",
-                "requestBody": {
-                    "description": "Dados necessários para realizar a operação (\"phone\" é necessário se \"is_barber\" for true)",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "password",
-                                    "is_barber"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Joao Pedro"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "jp123!__zero123"
-                                    },
-                                    "is_barber": {
-                                        "type": "boolean",
-                                        "example": true
-                                    },
-                                    "phone": {
-                                        "type": "string",
-                                        "example": "12999999999"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Administrador consegue atualizar suas propriedades",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/AdminResource"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno ao tentar atualizar administrador",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Não foi possível atualizar usuário administrador"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
             "post": {
                 "tags": [
                     "Admins"
                 ],
                 "summary": "Cria um admin",
-                "description": "Permite a um administrador criar um novo usuário administrador.\n\n**Middleware:** Apenas admins (`is.Admin`)",
+                "description": "Permite um administrador criar um novo usuário administrador.\n\n**Middleware:** Apenas admins (`is.Admin`)",
                 "operationId": "createAdmin",
                 "requestBody": {
                     "description": "Dados necessários para realizar a operação (\"phone\" é necessário se \"is_barber\" for true)",
@@ -304,7 +223,7 @@
                 ],
                 "summary": "Atualização de admin",
                 "description": "Um usuário administrador pode se auto modificar.\n\n**Middleware:** Apenas admins (`is.Admin`)",
-                "operationId": "patchUpdateAdmin",
+                "operationId": "updateAdmin",
                 "requestBody": {
                     "description": "Pelo menos um dado deve ser enviado para realizar a operação (\"phone\" é necessário se \"is_barber\" for true)",
                     "required": true,
@@ -342,7 +261,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Administrador consegue atualizar suas propriedades",
+                        "description": "Administrador consegue alterar suas propriedades",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -357,14 +276,14 @@
                         }
                     },
                     "500": {
-                        "description": "Erro interno ao tentar atualizar administrador",
+                        "description": "Erro interno ao tentar alterar administrador",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Não foi possível atualizar usuário administrador"
+                                            "example": "Não foi possível alterar usuário administrador"
                                         }
                                     },
                                     "type": "object"
@@ -796,6 +715,552 @@
                     }
                 ]
             }
+        },
+        "/api/scheduling/": {
+            "get": {
+                "tags": [
+                    "Schedulings"
+                ],
+                "summary": "Lista agendamentos",
+                "description": "Retorna uma listagem paginada de agendamentos (10 por página). O usuário pode usar filtros de busca por query string ou pelo request body. Os filtros são: start_date, end_date, barber_id e client_id",
+                "operationId": "listScheduling",
+                "requestBody": {
+                    "description": "O campo client_id só pode ser usado por usuários clientes para ver os próprios agendamentos\n\nDados necessarios para realizar a operação",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "start_date",
+                                    "end_date",
+                                    "barber_id",
+                                    "client_id"
+                                ],
+                                "properties": {
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-10-30"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-10-30"
+                                    },
+                                    "barber_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "client_id": {
+                                        "type": "integer",
+                                        "example": 15
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retorna a lista paginada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SchedulingResource"
+                                            }
+                                        },
+                                        "links": {
+                                            "$ref": "#/components/schemas/LaravelPaginationLinks"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/LaravelPaginationMeta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar listar agendamentos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível listar os agendamentos"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Schedulings"
+                ],
+                "summary": "Cria um agendamento",
+                "description": "Permite a um usuário criar um novo agendamento.",
+                "operationId": "createScheduling",
+                "requestBody": {
+                    "description": "Se um usuário for barbeiro, \"barber_id\" se torna opcional, se ele for apenas administrador, se torna obrigatório, e, se for cliente, \"client_id\" se torna proibído e \"barber_id\" obrigatório.\n\nDados necessários para realizar a operação:",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "start_date",
+                                    "end_date",
+                                    "barber_id",
+                                    "client_id"
+                                ],
+                                "properties": {
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-10-30 07:10:00"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-10-30 07:30:00"
+                                    },
+                                    "barber_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "client_id": {
+                                        "type": "integer",
+                                        "example": 15
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Agendamento é criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/SchedulingResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Entidade não verificada ou período de agendamento invalido/indisponível",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "nao_verificado": {
+                                        "summary": "Cliente e/ou barbeiro se classificam como entidade não verificada",
+                                        "value": "Barbeiro e/ou cliente não verificados"
+                                    },
+                                    "indisponivel": {
+                                        "summary": "Período de agendamento escolhido indisponível (madrugada ou ocupados)",
+                                        "value": "Período de tempo indisponível"
+                                    },
+                                    "muito_longo": {
+                                        "summary": "Período de agendamento muito longo (mais de uma hora e meia)",
+                                        "value": "Período de tempo muito longo"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar realizar criação de agendamento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível criar agendamento"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/scheduling/{id}/": {
+            "get": {
+                "tags": [
+                    "Schedulings"
+                ],
+                "summary": "Exibe um unico agendamento",
+                "description": "Exibe o agendamento pertencente ao id passado por parâmetro.",
+                "operationId": "showScheduling",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do agendamento que será exibido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna agendamento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/SchedulingResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sistema não encontra um agendamento correspondente ao id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Agendamento não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Usuário não é responsável pelo agendamento encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Você não é permitido de consultar esse agendamento"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar procurar por agendamento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível realizar consulta de agendamento"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/scheduling/{id}": {
+            "delete": {
+                "tags": [
+                    "Schedulings"
+                ],
+                "summary": "Exclui agendamento",
+                "description": "Um usuário responsável pelo agendamento cancelá-lo",
+                "operationId": "deleteScheduling",
+                "responses": {
+                    "200": {
+                        "description": "Usuario responsável consegue deletar agendamento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Agendamento deletado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sistema não encontra um agendamento correspondente ao id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Agendamento não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Usuário não é responsável pelo agendamento encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Você não é permitido de alterar esse agendamento"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Agendamento não pode ser cancelado porque restam apenas 1 hora e meia",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não é possivel alterar esse agendamento pois faltam apenas uma hora e meia"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar alterar agendamento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível deletar agendamento"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Schedulings"
+                ],
+                "summary": "Atualização de agendamento",
+                "description": "Um usuário responsável pelo agendamento (cliente ou administradores) pode alterá-lo.",
+                "operationId": "updateScheduling",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do agendamento que será alterado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Dados que podem ser alterados pela operação",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "start_date",
+                                    "end_date",
+                                    "barber_id"
+                                ],
+                                "properties": {
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-11-25 10:30:00"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-11-25 11:00:00"
+                                    },
+                                    "barber_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuário responsável consegue alterar agendamento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/SchedulingResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sistema não encontra um agendamento correspondente ao id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Agendamento não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Usuário não é responsável pelo agendamento encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Você não é permitido de alterar esse agendamento"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Entidade não verificada ou período de agendamento invalido/indisponível",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "nao_verificado": {
+                                        "summary": "Cliente e/ou barbeiro se classificam como entidade não verificada",
+                                        "value": "Barbeiro e/ou cliente não verificados"
+                                    },
+                                    "indisponivel": {
+                                        "summary": "Período de agendamento escolhido indisponível (madrugada ou ocupados)",
+                                        "value": "Período de tempo indisponível"
+                                    },
+                                    "muito_longo": {
+                                        "summary": "Período de agendamento muito longo (mais de uma hora e meia)",
+                                        "value": "Período de tempo muito longo"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao tentar alterar agendamento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível alterar o agendamento"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -822,6 +1287,34 @@
                 },
                 "type": "object"
             },
+            "SchedulingResource": {
+                "properties": {
+                    "id": {
+                        "description": "Transform the resource into an array.",
+                        "type": "integer",
+                        "example": 7
+                    },
+                    "barber_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "client_id": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-30 07:10:00"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-30 07:50:00"
+                    }
+                },
+                "type": "object"
+            },
             "LaravelPaginationMeta": {
                 "title": "Metadados da paginação",
                 "properties": {
@@ -844,7 +1337,7 @@
                             "properties": {
                                 "url": {
                                     "type": "string",
-                                    "example": "http://localhost:8000/api/admin?page=1"
+                                    "example": "http://localhost:8000/api/domain?page=1"
                                 },
                                 "label": {
                                     "type": "string",
@@ -864,7 +1357,7 @@
                     },
                     "path": {
                         "type": "string",
-                        "example": "http://localhost:8000/api/admin"
+                        "example": "http://localhost:8000/api/domain"
                     },
                     "per_page": {
                         "type": "integer",
@@ -887,11 +1380,11 @@
                 "properties": {
                     "first": {
                         "type": "string",
-                        "example": "http://localhost:8000/api/admin?page=1"
+                        "example": "http://localhost:8000/api/domain?page=1"
                     },
                     "last": {
                         "type": "string",
-                        "example": "http://localhost:8000/api/admin?page=1"
+                        "example": "http://localhost:8000/api/domain?page=1"
                     },
                     "prev": {
                         "type": "string",
@@ -923,6 +1416,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Schedulings",
+            "description": "Schedulings"
         }
     ]
 }

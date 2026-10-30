@@ -8,10 +8,15 @@ use App\Exceptions\EmailVerify\EmailAlreadyVerifiedException;
 use App\Exceptions\EmailVerify\InvalidHashException;
 use App\Exceptions\Login\InvalidCredentialsException;
 use App\Exceptions\Register\RegisterErrorException;
+use App\Exceptions\Scheduling\CancellationWindowExpiredException;
+use App\Exceptions\UnverifiedEntityException;
 use App\Http\Middleware\IsAdminUserMiddleware;
+use Carbon\Exceptions\InvalidPeriodDateException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Validation\UnauthorizedException;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -40,7 +45,19 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (SoleAdminException $e){
             return response()->json(["message" => "Você não pode apagar sua conta sendo o único administrador"], 422);
         });
-        $exceptions->render(function (AdminNotFoundException $e){
-            return response()->json(["message" => "Usuário administrador não encontrado"], 404);
+        $exceptions->render(function (NotFoundResourceException $e) {
+            return response()->json(["message" => $e->getMessage()], 404);
+        });
+        $exceptions->render(function (InvalidPeriodDateException $e){
+            return response()->json(["message" => $e->getMessage()], $e->getCode());
+        });
+        $exceptions->render(function (UnverifiedEntityException $e){
+            return response()->json(["message" => "Barbeiro e/ou cliente não verificados"], 422);
+        });
+        $exceptions->render(function (UnauthorizedException $e){
+            return response()->json(["message" => $e->getMessage()], $e->getCode());
+        });
+        $exceptions->render(function (CancellationWindowExpiredException $e){
+            return response()->json(["message" => "Não é possivel alterar esse agendamento pois faltam apenas uma hora e meia"], 422);
         });
     })->create();

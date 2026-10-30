@@ -37,13 +37,6 @@ class SendVerificationJob implements ShouldQueue, ShouldBeUnique
         return "emailverify-{$this->user->id}";
     }
 
-    public function middleware(): array
-    {
-        return [
-            new WithoutOverlapping("emailverifykey-{$this->user->id}"),
-        ];
-    }
-
     /**
      * Execute the job.
      */

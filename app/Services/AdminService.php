@@ -2,16 +2,14 @@
 
 namespace App\Services;
 
-use App\Exceptions\Admin\AdminNotFoundException;
 use App\Exceptions\Admin\SoleAdminException;
-use App\Exceptions\Register\RegisterErrorException;
 use App\Http\Resources\AdminResource;
 use App\Jobs\SendVerificationJob;
 use App\Models\Barber;
 use App\Models\User;
-use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class AdminService
 {
@@ -60,8 +58,8 @@ class AdminService
             if ($admin){
                 return $admin;
             }
-            throw new AdminNotFoundException();
-        } catch (AdminNotFoundException $e){
+            throw new NotFoundResourceException("Usuário administrador não encontrado", 404);
+        } catch (NotFoundResourceException $e){
             throw $e;
         } catch (\Throwable $e){
             return false;

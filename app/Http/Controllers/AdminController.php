@@ -77,7 +77,7 @@ class AdminController extends Controller
         path: '/api/admin/',
         operationId: 'createAdmin',
         summary: 'Cria um admin',
-        description: "Permite a um administrador criar um novo usuário administrador.\n\n**Middleware:** Apenas admins (`is.Admin`)",
+        description: "Permite um administrador criar um novo usuário administrador.\n\n**Middleware:** Apenas admins (`is.Admin`)",
         tags: ['Admins'],
         security: [['bearerAuth' => []]],
         requestBody: new OA\RequestBody(
@@ -223,74 +223,10 @@ class AdminController extends Controller
 
     }
 
-    #[OA\Put(
-        path: '/api/admin/',
-        operationId: 'putUpdateAdmin',
-        summary: 'Atualização de admin',
-        description: "Um usuário administrador pode se auto modificar.\n\n**Middleware:** Apenas admins (`is.Admin`)",
-        tags: ['Admins'],
-        security: [['bearerAuth' => []]],
-        requestBody: new OA\RequestBody(
-            required: true,
-            description: 'Dados necessários para realizar a operação ("phone" é necessário se "is_barber" for true)',
-            content: new OA\JsonContent(
-                required: ['name', 'password', 'is_barber'],
-                properties: [
-                    new OA\Property(
-                        property: 'name',
-                        type: 'string',
-                        example: 'Joao Pedro'
-                    ),
-                    new OA\Property(
-                        property: 'password',
-                        type: 'string',
-                        format: 'password',
-                        example: 'jp123!__zero123'
-                    ),
-                    new OA\Property(
-                        property: 'is_barber',
-                        type: 'boolean',
-                        example: true
-                    ),
-                    new OA\Property(
-                        property: 'phone',
-                        type: 'string',
-                        example: '12999999999'
-                    )
-                ]
-            )
-        ),
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Administrador consegue atualizar suas propriedades',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(
-                            property: 'data',
-                            ref: '#/components/schemas/AdminResource'
-                        )
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 500,
-                description: 'Erro interno ao tentar atualizar administrador',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(
-                            property: 'message',
-                            type: 'string',
-                            example: 'Não foi possível atualizar usuário administrador'
-                        )
-                    ]
-                )
-            )
-        ]
-    )]
+    
     #[OA\Patch(
         path: '/api/admin/',
-        operationId: 'patchUpdateAdmin',
+        operationId: 'updateAdmin',
         summary: 'Atualização de admin',
         description: "Um usuário administrador pode se auto modificar.\n\n**Middleware:** Apenas admins (`is.Admin`)",
         tags: ['Admins'],
@@ -328,7 +264,7 @@ class AdminController extends Controller
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'Administrador consegue atualizar suas propriedades',
+                description: 'Administrador consegue alterar suas propriedades',
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(
@@ -340,13 +276,13 @@ class AdminController extends Controller
             ),
             new OA\Response(
                 response: 500,
-                description: 'Erro interno ao tentar atualizar administrador',
+                description: 'Erro interno ao tentar alterar administrador',
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(
                             property: 'message',
                             type: 'string',
-                            example: 'Não foi possível atualizar usuário administrador'
+                            example: 'Não foi possível alterar usuário administrador'
                         )
                     ]
                 )
@@ -361,7 +297,7 @@ class AdminController extends Controller
         if ($updatedAdmin){
             return new AdminResource($updatedAdmin);
         }
-        return response()->json(["message" => "Não foi possível atualizar usuário administrador"], 500);
+        return response()->json(["message" => "Não foi possível alterar usuário administrador"], 500);
     }
 
     #[OA\Delete(
