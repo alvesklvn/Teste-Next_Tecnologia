@@ -553,7 +553,7 @@ class SchedulingController extends Controller
                         new OA\Property(
                             property: 'message',
                             type: 'string',
-                            example: 'Não é possivel alterar esse agendamento pois faltam apenas uma hora e meia'
+                            example: 'Não é possivel alterar esse agendamento pois faltam menos de uma hora e meia'
                         )
                     ]
                 )

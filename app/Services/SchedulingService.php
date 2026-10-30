@@ -94,8 +94,8 @@ class SchedulingService
             $scheduling = Scheduling::create([
                 'barber_id' => $data['barber_id'],
                 'client_id' => $data['client_id'],
-                'start_date' => $data['start_date'],
-                'end_date' => $data['end_date']
+                'start_date' => $start,
+                'end_date' => $end
             ]);
             SendSchedulingNotificationJob::dispatch($barber->user, $scheduling, ActionType::CREATED)->onQueue('schedulings');
             return $scheduling;

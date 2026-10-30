@@ -23,10 +23,10 @@ class Scheduling extends Model
             'id' => 'integer',
             'client_id' => 'integer',
             'barber_id' => 'integer',
-            'start_date' => 'datetime',
-            'end_date' => 'datetime',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime'
+            'start_date' => 'datetime:Y-m-d H:i:s',
+            'end_date' => 'datetime:Y-m-d H:i:s',
+            'created_at' => 'datetime:Y-m-d H:i:s',
+            'updated_at' => 'datetime:Y-m-d H:i:s'
         ];
     }
 

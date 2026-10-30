@@ -58,6 +58,6 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->json(["message" => $e->getMessage()], $e->getCode());
         });
         $exceptions->render(function (CancellationWindowExpiredException $e){
-            return response()->json(["message" => "Não é possivel alterar esse agendamento pois faltam apenas uma hora e meia"], 422);
+            return response()->json(["message" => "Não é possivel alterar esse agendamento pois faltam menos de uma hora e meia"], 422);
         });
     })->create();
